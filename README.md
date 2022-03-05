@@ -332,3 +332,35 @@ Go to `index.js` and wrap our `<App />` in our `<StateProvider initialState={ini
 
 Edit `Header.js` to use `useStateValue()`
 Add in `basket?.length` to show basket item count in upper right
+
+## Checkout Page
+
+### Calculate subtotal price
+`Subtotal.js`
+`import { useStateValue } from "./StateProvider";`
+`const [{ basket }, dispatch] = useStateValue();`
+
+      <p>
+        Subtotal ({basket.length}):
+        <strong>{value}</strong>
+      </p>
+
+value is passed in as a "render prop"
+
+Go to `Reducer.js`
+We're going to build a Selector
+
+    // Selector
+    // .reduce() maps through the basket
+    // Here we use reduce to add each item price to the total amount, with the total starting at 0
+    export const getBasketTotal = (basket) => basket?.reduce((amount, item) => item.price + amount, 0);
+
+Go back to `Subtotal.js`
+`import { getBasketTotal } from "./Reducer";`
+`value={getBasketTotal(basket)}`
+
+
+### Show items in basket
+
+
+### Full log-in with Firebase auth
