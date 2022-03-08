@@ -361,6 +361,54 @@ Go back to `Subtotal.js`
 
 
 ### Show items in basket
+Go to `Checkout.js`
+Build `CheckoutProduct` Component
+Make `CheckoutProduct.js`
+
+    import React from 'react'
+    import './CheckoutProduct.css'
+
+    function CheckoutProduct() {
+      return (
+        <div className="checkoutProduct">
+
+        </div>
+      )
+    }
+
+    default export CheckoutProduct
+
+Create `CheckoutProduct.css`
+
+Inside `CheckoutProduct.js`, Add component logic
+Destructure props passed through to access id, image, title, price, rating
+
+In, `Checkout.js`, add
+
+    {basket.map(item => (
+
+            <CheckoutProduct
+              id={item.id}
+              title={item.title}
+              image={item.image}
+              price={item.price}
+              rating={item.rating}
+            />
+          ))}
 
 
-### Full log-in with Firebase auth
+Now let's style in `CheckoutProduct.css`
+`display: flex` changes vertical rating stars to be horizontal
+
+```
+.checkoutProduct__image {
+  object-fit: contain;
+  width: 180px;
+  height: 180px;
+}
+```
+To make the image a reasonable size
+
+### Now we hook up the remove from basket button
+
+## Full log-in with Firebase auth
