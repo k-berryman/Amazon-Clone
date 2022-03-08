@@ -18,6 +18,26 @@ const reducer = (state, action) => {
         basket: [...state.basket, action.item],
       };
 
+    case "REMOVE_FROM_BASKET":
+      // findIndex returns the first element with the given id
+      const index = state.basket.findIndex((basketItem) => basketItem.id === action.id);
+
+      // make a copy of the basket
+      let newBasket = [...state.basket];
+
+      // if index >= 0, it found an item
+      if(index >= 0) {
+        // chop off that item!
+        newBasket.splice(index, 1);
+      } else {
+        console.warn(`Can't remove product (id: ${action.id}) because it's not in the basket`)
+      }
+
+      return {
+        ...state,
+        basket: newBasket
+      }
+
     default:
       return state;
   }

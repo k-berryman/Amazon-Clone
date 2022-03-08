@@ -410,5 +410,49 @@ Now let's style in `CheckoutProduct.css`
 To make the image a reasonable size
 
 ### Now we hook up the remove from basket button
+In `CheckoutProduct.js`, `<button onClick={removeFromBasket}>Remove from Basket</button>`
+
+Pull/change/manipulate the basket with dispatching an action into the reducer/store
+
+```
+import { useStateValue } from './StateProvider';
+
+const [{ basket }, dispatch] = useStateValue();
+```
+
+and
+
+```
+const removeFromBasket = () => {
+    dispatch({
+      type: 'REMOVE_FROM_BASKET',
+      id: id,
+    })
+  }
+```
+
+Then, go into `Reducer.js` and in the switch statement add the following case
+```
+    case "REMOVE_FROM_BASKET":
+      // findIndex returns the first element with the given id
+      const index = state.basket.findIndex((basketItem) => basketItem.id === action.id);
+
+      // make a copy of the basket
+      let newBasket = [...state.basket];
+
+      // if index >= 0, it found an item
+      if(index >= 0) {
+        // chop off that item!
+        newBasket.splice(index, 1);
+      } else {
+        console.warn(`Can't remove product (id: ${action.id}) because it's not in the basket`)
+      }
+
+      return {
+        ...state,
+        basket: newBasket
+      }
+```
+making sure to not remove every item with the same id, only one item at a time. find the index. findIndex finds the first one and returns it
 
 ## Full log-in with Firebase auth
