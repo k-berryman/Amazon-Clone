@@ -455,4 +455,82 @@ Then, go into `Reducer.js` and in the switch statement add the following case
 ```
 making sure to not remove every item with the same id, only one item at a time. find the index. findIndex finds the first one and returns it
 
-## Full log-in with Firebase auth
+## Full Log-In with Firebase auth
+
+### We need a log-in page (front-end)
+Go to `App.js`
+Create `<Route path="/login" element={}/>`
+
+Go to `Header.js`
+Go to `<span className="header__optionLineTwo">Sign In</span>`
+Surround it with a link
+```
+        <Link to='/login'>
+          <div className="header__option">
+            <span className="header__optionLineOne">Hello Guest</span>
+            <span className="header__optionLineTwo">Sign In</span>
+          </div>
+        </Link>
+```
+
+Build `Login` Component `<Login />`
+```
+import React from 'react';
+
+function Login() {
+  return (
+    <div className="login">
+    </div>
+  )
+}
+
+export default Login
+
+
+```
+Create `Login.css`
+In `App.js`, `import Login from './Login'`
+
+Add image
+`object-fit: contain;` keeps the object ratio when resizing
+Add styles
+
+Go back to `Login.js`
+**We're going to use state to track what's in the input fields**
+
+```
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+```
+
+Go to
+```
+          <h5>Email</h5>
+          <input type='text'></input>
+```
+and change it to `<input type='text' value={email}></input>` to map the value email to the email state. this connects the 2 things. Every time the user types something in, it triggers an onChange, which gives us an event.
+```
+          <input type='text' value={email} onChange={event => setEmail(e.target.value)}></input>
+
+```
+Now as the user types in, we're setting the email
+Don't use null --- use ''
+Do the same for password
+
+Now state and values are tied!!!!!!
+
+Now we want to trigger functions when those buttons are clicked. Add onClick for Sign In button.
+```
+  <button
+            className="login__signinButton"
+            type="submit"
+            onClick={signIn}
+          >
+            Sign In
+          </button>
+```
+Create signIn func.
+We don't want it to refresh!! therefore, `event.preventDefault()`
+We don't like refreshing in react
+
+now do the other button
