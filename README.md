@@ -737,3 +737,39 @@ and
           </div>
         </Link>
 ```
+
+Wo-hoo!
+
+## Get Username on Checkout Page
+### Now let's pull user from state
+Go to `Checkout.js`
+Login & go to basket
+`const [{ basket, user }, dispatch] = useStateValue();`
+
+`<h3>Hello, {user?.email}</h3>`
+
+## Deployment
+make sure you've done `sudo npm install -g firebase-tools`
+
+`firebase login`
+`firebase init`, click Hosting (Configure), click Use an existing project, click amazon-clone
+What do you want to use as your public directory?  (public) `build`
+
+?  Configure as a single-page app (rewrite all urls to /index.html)?  Yes (TYPE y)
+
+Now we've prepped Firebase stuff!!!!
+
+`npm run build`
+This gets rid of unoptimized stuff like hot reloading or dev things
+
+**When we make changes to the app, we need to run `npm run build` again**
+
+(Now there's a build folder)
+
+`firebase deploy`
+
+It gives us our hosting URL!!!
+https://clone-554ae.web.app
+
+
+## Add item to DB, Pull it into our app from the DB, & Render it
