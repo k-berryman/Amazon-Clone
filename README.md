@@ -784,6 +784,8 @@ Serverless architecture
 
 MERN Stack
 
+Blaze Plan on Firebase
+
 Firestore is a real-time database
 
 ## Add item to DB, Pull it into our app from the DB, & Render it
@@ -856,3 +858,202 @@ You can even doing recurring subscription payments
 go into a row
 
 wohoo
+
+remember dev is `npm start`
+
+# Payment Processing with Stripe
+
+Installing dependencies
+`npm install @stripe/stripe-js`
+`npm install @stripe/react-stripe-js`
+
+Create a Stripe account
+https://stripe.com/
+Sign In, Sign Up, Create Account
+Developers, API Keys, copy Publishable Key
+
+Go to `App.js`
+```
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+```
+
+Above the function, `const promise = loadStripe();`
+Now inside those parens paste that key
+
+This is a **public key** -- it doesn't matter about hiding -- no need to use .gitignore -- IT'S PUBLIC
+
+Change the `payments` route
+```
+<Route
+            path="/payment"
+            element=
+            {
+              <Elements stripe={promise}>
+                <Payment />
+              </Elements>
+            }
+          />
+```
+
+In `Payment.js`, we're going to use 2 very powerful hooks
+`import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";`
+
+```
+  const stripe = useStripe();
+  const elements = useElements();
+```
+
+Go to payment section and create a form. Add in a CardElement.
+
+Create handleSubmit function & handleChange function
+
+Add new state
+```
+  const [error, setError] = useState(null);
+  const [disabled, setDisabled] = useState(true);
+```
+
+here's where we're at
+
+```
+<div className="payment__details">
+              {/* STRIPE MAGICCCC*/}
+
+              <form onSubmit={handleSubmit}>
+                <CardElement onChange={handleChange}/>
+
+                <div className="payment__priceContainer">
+                  <CurrencyFormat
+                    renderText={(value) => (
+                      <h3>Order Total: {value}</h3>
+                    )}
+                    decimalScale={2}
+                    value={getBasketTotal(basket)}
+                    displayType={"text"}
+                    thousandSeparator={true}
+                    prefix={"$"}
+                  />
+                </div>
+```
+
+Now we add
+```
+                  <button
+                    disabled={processing || disabled || succeeded}
+                  >
+                    <span>{processing ? <p>Processing</p> : "Buy Now"}</span>
+                  </button>
+```
+
+That means we need 2 new pieces of state
+```
+
+  const [succeeded, setSucceeded] = useState(false);
+  const [processing, setProcessing] = useState("");
+```
+
+Okay now let's finally address `handleSubmit`
+it's async
+```
+    // prevent it from refreshing
+    event.preventDefault();
+
+    // this sets the button to disabled, so they don't accidentally click Buy 5 times
+    setProcessing(true);
+
+```
+
+Now we need a **Client Secret**
+In any payment processor/platform, "tell Stripe that I have a payment I want to send to you of like $50. Please give me a client secret that I can use to run by my card." - Sonny
+
+Client Secret is NEEDED
+
+Make a piece of state for it `const [clientSecret, setClientSecret] = useState(true);`
+
+We're going to use a `useEffect`
+This will run when the Payment component loads and when dependencies changes. In this case, basket. This will generate the special stripe secret which allows us to charge a customer. Whenever the basket changes, we need to get a new secret.
+
+Call an async function inside of a useEffect by making the async function and then calling it afterwards
+
+```
+  useEffect(() => {
+    // generate the special stripe secret which allows us to charge a customer
+
+    const getClientSecret = async () => {
+      const response = await axios
+    }
+
+    getClientSecret();
+
+  }, [basket])
+```
+Now we need axios. Axios is a way of making requests (GET, POST, etc).
+
+Create `axios.js`
+`npm install axios`
+In `axios.js`,
+```
+import axios from "axios";
+
+const instance = axios.create({
+  // Put in URL of API (cloud function)
+  baseURL: '...'
+});
+
+export default instance;
+
+```
+
+Go back to `Payment.js`
+```
+useEffect(() => {
+    // generate the special stripe secret which allows us to charge a customer
+
+    const getClientSecret = async () => {
+      const response = await axios({
+        method: 'post',
+
+        // Stripe expects the total in a currencies subunits
+        // We're using dollars, so pass in the total in cents, thus * 100        
+
+        url: `/payments/create?total=${getBasketTotal(basket)}`
+      })
+    }
+
+    getClientSecret();
+```
+
+?total for query param
+
+        // Stripe expects the total in a currencies subunits
+        // We're using dollars, so pass in the total in cents, thus * 100
+
+
+Alright now we have
+```
+  useEffect(() => {
+    // generate the special stripe secret which allows us to charge a customer
+
+    const getClientSecret = async () => {
+      const response = await axios({
+        method: 'post',
+        // Stripe expects the total in a currencies subunits
+        // We're using dollars, so pass in the total in cents, thus * 100
+        url: `/payments/create?total=${getBasketTotal(basket) * 100}`
+      });
+      setClientSecret(response.data.clientSecret);
+    }
+
+    getClientSecret();
+
+  }, [basket])
+```
+Meaning, whenever the basket changes, it will make the request & update the special stripe secret, which allows us to charge the customer the correct amount. THIS IS VERY IMPORTANT.
+
+Go to `handleSubmit`
+
+How Stripe knows how much to charge customer is from the client secret!!!!!
+
+Stopped at 6:29:27
+https://www.youtube.com/watch?v=RDV3Z1KCBvo&list=PLKtYlTJOyYZNdhJ708REZiNOeeXOWh8dm&index=7&t=70s&ab_channel=CleverProgrammer

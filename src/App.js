@@ -8,6 +8,10 @@ import Login from './Login';
 import Payment from './Payment';
 import { auth } from './firebase';
 import { useStateValue } from './StateProvider';
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+
+const promise = loadStripe('pk_test_51KbFo2FVAzDj8bVXSLOlv3p3kZTyYQlLdtEHmYuwEt3QlVjfJUe9xJR7NtcmzLD233ZOsv1S72F85GHqVJLisdqI00MHDHupno');
 
 function App() {
   // React Context API
@@ -43,7 +47,15 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />}/>
           <Route path="/checkout" element={[<Checkout />]}/>
-          <Route path="/payment" element={<Payment />}/>
+          <Route
+            path="/payment"
+            element=
+            {
+              <Elements stripe={promise}>
+                <Payment />
+              </Elements>
+            }
+          />
           <Route path="/" element={[<Home />]}/>
         </Routes>
       </div>
