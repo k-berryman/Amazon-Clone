@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Payment.css';
 import { useStateValue } from './StateProvider';
 import CheckoutProduct from './CheckoutProduct';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import CurrencyFormat from "react-currency-format";
 import { getBasketTotal } from "./Reducer";
+import axios from './axios';
 
 function Payment() {
   const [{ basket, user }, dispatch] = useStateValue();
@@ -18,6 +19,8 @@ function Payment() {
   const [succeeded, setSucceeded] = useState(false);
   const [processing, setProcessing] = useState("");
   const [clientSecret, setClientSecret] = useState(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     // generate the special stripe secret which allows us to charge a customer
@@ -51,7 +54,15 @@ function Payment() {
       payment_method: {
         card: elements.getElement(CardElement)
       }
-    }).then(())
+    }).then(({ paymentIntent }) => {
+      // Destructure response to get paymentIntent,
+      // which is the Stripe term for payment confirmation
+
+      setSucceeded(true);
+      setError(null);
+      setProcessing(false);
+      navigate.replace('/orders');
+    })
 
   }
 

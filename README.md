@@ -1055,5 +1055,70 @@ Go to `handleSubmit`
 
 How Stripe knows how much to charge customer is from the client secret!!!!!
 
-Stopped at 6:29:27
-https://www.youtube.com/watch?v=RDV3Z1KCBvo&list=PLKtYlTJOyYZNdhJ708REZiNOeeXOWh8dm&index=7&t=70s&ab_channel=CleverProgrammer
+https://www.youtube.com/watch?v=RDV3Z 1KCBvo&list=PLKtYlTJOyYZNdhJ708REZiNOeeXOWh8dm&index=7&t=70s&ab_channel=CleverProgrammer
+
+in payload, the .then(), what comes back is the payment intent (which is what stripe calls it). Destructure the response to get the paymentIntent. It's kind of like payment confirmation
+
+### Now let's build the backend!!!!
+#### Cloud functions
+
+`firebase init`
+Click functions, choose JS, y (use ESLint), y (Install dependencies now)
+
+Everything inside of `src/` is the frontend
+Now we have the `functions/` folder, which is a full-backend (cloud functions)
+
+`cd functions` Functions has it's own node_modules, package-json, index.js. It's basically another project
+
+Now, **when we do npm install, make sure we're in the functions folder** Otherwise it'll install into the frontend and not the backend
+
+Open `functions/index.js`
+
+We're going to build an Express App and host it on a cloud function
+
+Make sure we're in the functions dir
+`npm install express`
+
+We're in node, so use this syntax in `functions/index.js`
+`const express = require("express");`
+
+In `functions/`,
+`npm install cors`
+`npm install stripe`
+
+Go get the **secret key** from Stripe Dashboard
+
+Set up Express App -- we're setting up an API right now
+
+To set up an API, we need
+1. App config
+		a. Set up Express server with `const app = express();`
+2. Middlewares
+        a. `app.use(cors({ origin: true }));` cors is a kind of security
+        b. `app.use(express.json());` allows us to send data and pass it with the json format
+3. API Routes
+        a.  Set up a dummy route to check it's working. It gives us a request and a response.
+        `app.get('/', (request, response) => response.status(200).send('hello world'));`
+4. Listen Command
+       a. Get it up and running
+       `exports.api = functions.https.onRequest(app);`
+       functions references cloud functions
+
+This is the set up needed to get the backend Express app running on a cloud function
+
+Run this on our local machine by emulating it.
+In `functions/`, `firebase emulators:start`
+This spins up an Express Server and pops up a window -- we got to http://localhost:4000/functions
+`./emulator.png`
+
+This shows us our backend logs. Keep the backend running - don't close terminal.
+
+It also says `✔  functions[us-central1-api]:  http function initialized (http://localhost:5001/clone-554ae/us-central1/api).` which is an **API endpoint**
+
+`http://localhost:5001/clone-554ae/us-central1/api` is an example endpoint
+
+After we emulate it & know it works, then we can deploy it.
+
+If we want to call this endpoint
+
+`'/'` is our default endpoint, so going to the given url `(http://localhost:5001/clone-554ae/us-central1/api)` should return "hello world" -- IT DOES!!!!
