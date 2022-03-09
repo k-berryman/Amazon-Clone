@@ -2,6 +2,8 @@
 Tutorial by Qazi and Sonny Sangha from Clever Programmer
 https://www.youtube.com/watch?v=RDV3Z1KCBvo&list=PLKtYlTJOyYZNdhJ708REZiNOeeXOWh8dm&index=6&t=70s&ab_channel=CleverProgrammer
 
+`npm start`
+
 ## Getting Set Up
 In a new dir, run `npx create-react-app amazon-clone`
 This sets up a starter template
@@ -534,3 +536,204 @@ We don't want it to refresh!! therefore, `event.preventDefault()`
 We don't like refreshing in react
 
 now do the other button
+
+### Firebase Reminder
+Go to the firebase project, project settings, scroll down to config, put it in firebase.js
+
+# User Auth
+Go to Firebase
+On the left, go to the Authentication tab
+Go to Sign-In Method
+Go to Email/Password
+Click the 1st enable
+Click save
+
+`npm install firebase`
+`sudo npm install -g firebase-tools`
+
+Go to `firebase.js`
+```
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
+```
+Initialize our app and set up everything
+`const firebaseApp = firebase.initializeApp(firebaseConfig);`
+
+Firestore is the real-time database from Firebase
+Initialize the db with `const db = firebaseApp.firestore();`
+
+Initialize auth `const auth = firebase.auth();`
+
+`export { db, auth };`
+
+----
+
+Let's go back to `Login.js`
+`import { auth } from './firebase';`
+
+We're registering first
+```
+  const register = (event) => {
+    event.preventDefault();
+
+    // some fancy firebase register
+    auth
+      .createUserWithEmailAndPassword(email, password)
+      .then((authObj) => {
+        // successfully created a new user
+        console.log(authObj);
+      })
+      .catch((error) => alert(error.message))
+  }
+
+```
+
+Now let's try adding an account
+`test123@gmail.com`
+`testpass`
+
+IT WORKEDDDD
+
+To redirect them to the home page, we're going to pull in useHistory from ReactRouter in `Login.js`
+`import { Link, useHistory } from "react-router-dom";`
+
+`const history = useHistory();`
+this allows us to programmatically change the url
+
+After registering,
+```
+if(auth) {
+          history.push('/')
+        }
+```
+this forces a redirect
+
+Now let's try adding another account
+`test1234@gmail.com`
+`testpass`
+
+It redirects us!
+
+----
+
+Now let's implement logging in
+Go to the `signIn` func in `Login.js`
+
+```
+  const signIn = (event) => {
+    event.preventDefault();
+
+    // some fancy firebase login
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .then(auth => {
+        navigate('/')
+      })
+      .catch(error => alert(error.message))
+  }
+
+```
+
+Let's try
+`test123@gmail.com`
+`testpass` sign in
+
+IT WORKSSSSSSS
+
+---
+Now how do we keep track of who's signed-in..?
+We're going back to `App.js`
+
+We're creating a listener to keep track
+
+In `App.js`,
+`import { auth } from './firebase';`
+`import React, { useEffect } from 'react';`
+
+```
+
+```
+
+When we do this auth with Firebase, even if we refresh the page, it will log us back in if we were already logged in
+
+We're going to store the user inside of the React Context API (our store)
+
+Go to `Reducer.js`,
+```
+export const initialState = {
+  basket: [],
+  user: null,
+};
+```
+Add user
+
+Back to `App.js`
+```
+import { useStateValue } from './StateProvider';
+
+  // React Context API
+  const [{}, dispatch] = useStateValue();
+```
+
+This fires off an event and shoots it into the data layer.
+Every log-in, it shoots the info to the data layer.
+Log outs remove the user from the data layer
+
+```
+      if(authUser) {
+        // the user just logged in / was logged in
+        dispatch({
+          type: 'SET_USER',
+          user: authUser
+        })
+
+      } else {
+        // the user is logged out
+        dispatch({
+          type: 'SET_USER',
+          user: null
+        })
+      }
+```
+
+Our data layer is connected with firebase
+
+Since we dispatched the 	`SET_USER` action...
+In `Reducer.js`, add in the case that listens for this
+
+```
+    case "SET_USER":
+      return {
+        ...state,
+        user: action.user
+      }
+```
+Twitch and InstaCart use Firebase
+
+#### Now we need log-out functionality
+Go to `Header.js`
+`import { auth } from './firebase';`
+
+`const [{ basket, user }, dispatch] = useStateValue();`
+
+```
+  const handleAuthentication = () => {
+    if(user) {
+      // this line is all we need to sign out with firebase
+      auth.signOut();
+    }
+  }
+```
+and
+```
+        <Link to={!user && '/login'}>
+          <div
+            className="header__option"
+            onClick={handleAuthentication}
+          >
+            <span className="header__optionLineOne">Hello Guest</span>
+            <span className="header__optionLineTwo">{user ? 'Sign Out' : 'Sign In'}</span>
+          </div>
+        </Link>
+```

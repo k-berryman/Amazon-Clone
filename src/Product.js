@@ -6,7 +6,7 @@ function Product({ id, title, image, price, rating }) {
   // Destructure basket out of state
   const [{ basket }, dispatch] = useStateValue();
 
-  console.log('basketttt', basket);
+  // console.log('basketttt', basket);
 
   const addToBasket = () => {
     // Dispatch the item into the data layer
