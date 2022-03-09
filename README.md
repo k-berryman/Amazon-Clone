@@ -772,4 +772,87 @@ It gives us our hosting URL!!!
 https://clone-554ae.web.app
 
 
+## React Flip Move Animation
+Recommend
+
+
+
+### Notes
+We'll be deploying an Express API on a Firebase cloud function as a complete back-end solution
+
+Serverless architecture
+
+MERN Stack
+
+Firestore is a real-time database
+
 ## Add item to DB, Pull it into our app from the DB, & Render it
+hmm
+
+## Username/Email in Header
+`npm start`
+`<span className="header__optionLineOne">Hello {!user ? 'Guest' : user.email}</span>`
+
+
+## Payment Page
+Inside of `Subtotal.js`
+
+`import { useNavigate } from 'react-router-dom';`
+`const navigate = useNavigate();`
+
+This gives us the browser history. That gives us the power to redirect
+`<button onClick={event => {navigate('/payment')}}>Proceed to checkout</button>`
+
+Go to `App.js` and add
+`<Route path="/payment" element={<h1>payyymeeee</h1>}/>`
+
+---
+
+Create **Payment** Component
+
+Create `Payment.js`
+```
+import React from 'react';
+
+function Payment() {
+  return (
+    <div className="payment">
+    </div>
+  )
+}
+
+export default Payment
+```
+Create Payment.css and `import './Payment.css';`
+In `App.js`, `import Payment from './Payment';` `<Payment />`
+
+Get user info from data layer with the following
+`import { useStateValue } from './StateProvider';`
+`const [{ basket, user }, dispatch] = useStateValue();`
+`<p>{user?.email}</p>`
+
+SHOW BASKET ITEMS
+```
+<div className="payment__items">
+            {/* All products */}
+            { basket?.map(item => (
+                <CheckoutProduct
+                  id={item.id}
+                  title={item.title}
+                  image={item.image}
+                  price={item.price}
+                  rating={item.rating}
+                />
+              ))
+            }
+          </div>
+```
+
+This also comes with remove from basket functionality. All 'remove from basket' buttons work still
+
+You can even doing recurring subscription payments
+
+`display: flex`
+go into a row
+
+wohoo
