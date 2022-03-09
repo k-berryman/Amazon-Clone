@@ -39,6 +39,8 @@ function Payment() {
 
   }, [basket])
 
+  console.log('THE SECRET IS ....', clientSecret);
+
   const handleSubmit = async (event) => {
     // do all the fancy stripe stuff here
 
@@ -61,7 +63,7 @@ function Payment() {
       setSucceeded(true);
       setError(null);
       setProcessing(false);
-      navigate.replace('/orders');
+      navigate('/orders');
     })
 
   }

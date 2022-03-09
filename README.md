@@ -3,6 +3,7 @@ Tutorial by Qazi and Sonny Sangha from Clever Programmer
 https://www.youtube.com/watch?v=RDV3Z1KCBvo&list=PLKtYlTJOyYZNdhJ708REZiNOeeXOWh8dm&index=6&t=70s&ab_channel=CleverProgrammer
 
 `npm start`
+Remember to remove/add secret key in `functions/index.js`
 
 ## Getting Set Up
 In a new dir, run `npx create-react-app amazon-clone`
@@ -1122,3 +1123,65 @@ After we emulate it & know it works, then we can deploy it.
 If we want to call this endpoint
 
 `'/'` is our default endpoint, so going to the given url `(http://localhost:5001/clone-554ae/us-central1/api)` should return "hello world" -- IT DOES!!!!
+
+Let's make another route
+`app.get('/kaitlin', (request, response) => response.status(200).send('what\'s up, Kaitlin?'));`
+Now go to the url (http://localhost:5001/clone-554ae/us-central1/api) and add `/kaitlin` to the end -- it show's what's up, Kaitlin? !!!!! SO COOL
+
+`http://localhost:5001/clone-554ae/us-central1/api` is the local API endpoint
+
+Now we want to create an endpoint with a post request
+(Remember referencing payments/create in `src/Payments.js`? We passed in a total as a query param)
+
+```
+app.post('/payments/create', async (request, response) => {
+  const total = request.query.total;
+
+  console.log('Payment Request Received BOOOOM -- total is... ', total);
+})
+```
+
+Okay now this is where Stripe comes in
+Add this in that post req
+```
+const paymentIntent = await stripe.paymentIntents.create({
+    amount: total,
+    currency: "usd",
+  });
+```
+
+HTTP Response 201 is Okay, Created Something
+With the response also send client secret
+
+Remember, frontend and backend run on different ports
+
+----
+
+Now go to `src/axios.js`
+Change `baseURL` to our local API Endpoint
+`baseURL: 'http://localhost:5001/clone-554ae/us-central1/api'`
+
+It's `/api` because of in `functions/index.js`, we have `exports.api`, so it gets that name
+
+Go to `src/Payment.js`
+Remember `url: /payments/create?total=${getBasketTotal(basket) * 100}` That's where we make our nice request. After the `getClientSecret` function, `console.log('THE SECRET IS ....', clientSecret);`
+
+Open up local frontend & it's console.
+Add some products, go to Payment page. The client secret prints! Also our backend terminal prints "Payment Request Received BOOOOM -- total is...  3475` (in subunits). Heck yeah. This key powers the transaction. Our frontend and backend are communicating!
+
+Go to `src/Payment.js`
+
+Use 42424242 for test Stripe nums
+Enter in the card info and click Buy now
+It should redirect us to `/orders`
+
+We need to build that page
+
+Go to Stripe
+Omg the transactions are there and the numbers match
+
+In Stripe, go to Payments
+
+
+To change it from a fake payment to a real payment,
+switch from using the test keys to the real keys inside of the API section
