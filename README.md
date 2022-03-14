@@ -1313,3 +1313,32 @@ Although, now it shouldn't have the remove from basket button, so inside of `Che
         )}
 ```
 And pass in hideButton in `Orders.js`
+
+#### Now connect orders page to returns and orders on header
+Wrap it in a link in `Header.js`
+```
+        <Link to='/orders'>
+          <div className="header__option">
+            <span className="header__optionLineOne">Returns</span>
+            <span className="header__optionLineTwo">Orders</span>
+          </div>
+        </Link>
+```
+
+#### Style Payments
+`Payment.css`
+
+#### Deploy
+Go to the server terminal (amazon-clone/functions) `firebase deploy --only functions` to deploy the backend
+
+Yeah... that failed ....
+Go to firebase and upgrade plan to Blaze
+Go to firebase, on the bottom of the hamburger menu it says Spark and Upgrade, click Upgrade, upgrade to Blaze, even though it's free, now it should say Blaze
+
+# IMPORTANT PAGES
+http://localhost:3000/
+https://clone-554ae.web.app/
+https://console.firebase.google.com
+https://dashboard.stripe.com/test/payments
+http://localhost:4000
+http://localhost:5001/clone-554ae/us-central1/api/
