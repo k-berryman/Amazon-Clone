@@ -63,13 +63,11 @@ function Payment() {
 
       // Push into NoSQL db
       db
-        .collection('users')   // Target users collection
+        .collection('users')    // Target users collection
         .doc(user?.uid)         // Target specific user
-        .collection('orders')  // Target user's orders collection
-        .doc(paymentIntent.id) // Use paymentIntent.id as order id
-
-        // Set data
-        .set({
+        .collection('orders')   // Target user's orders collection
+        .doc(paymentIntent.id)  // Use paymentIntent.id as order id
+        .set({ // Set data
           basket: basket,
           amount: paymentIntent.amount,
           created: paymentIntent.created // timestamp
@@ -84,7 +82,7 @@ function Payment() {
       })
 
       navigate('/orders');
-    })
+    }).catch(console.log("error...."))
 
   }
 

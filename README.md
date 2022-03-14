@@ -14,6 +14,8 @@ This spins up an Express Server and pops up a window -- we got to http://localho
 
 This shows us our backend logs. Keep the backend running - don't close terminal.
 
+also uses moment
+
 ## Getting Set Up
 In a new dir, run `npx create-react-app amazon-clone`
 This sets up a starter template
@@ -1267,4 +1269,39 @@ OMG IT WORKED
 (after restarting backend)
 
 
-Now Firestore records all users who place orders and their orders with each item
+**Now Firestore records all users who place orders and their orders with each item**
+
+----
+
+Okay now the info is in the db, but we need to display it on the screen
+
+Create state to store the orders
+Go to `Orders.js`
+
+```
+  const [orders, setOrders] = useState([]);
+
+  // get info from Context API
+  const [{ basket, user }, dispatch] = useStateValue();
+
+  useEffect(() => {
+    db
+      .collection('users')
+      .doc(user?.uid)
+      .collection('orders')
+      .orderBy('created', 'desc') // order by times in decending order
+      .onSnapshot(snapshot => (
+        setOrders(snapshot.docs.map(doc => ({
+          id: doc.id,
+          data: doc.data()
+        })))
+      )) // snapshot of the db right now -- realtime response
+  }, []);
+
+```
+
+Now let's create the UI, involving a new Order element
+We're going to install Moment for timestamps
+`npm install moment`
+
+Reuse CheckoutProduct component in Order.js
