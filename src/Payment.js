@@ -7,6 +7,7 @@ import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import CurrencyFormat from "react-currency-format";
 import { getBasketTotal } from "./Reducer";
 import axios from './axios';
+import { db } from './firebase';
 
 function Payment() {
   const [{ basket, user }, dispatch] = useStateValue();
@@ -59,6 +60,20 @@ function Payment() {
     }).then(({ paymentIntent }) => {
       // Destructure response to get paymentIntent,
       // which is the Stripe term for payment confirmation
+
+      // Push into NoSQL db
+      db
+        .collection('users')   // Target users collection
+        .doc(user?.uid)         // Target specific user
+        .collection('orders')  // Target user's orders collection
+        .doc(paymentIntent.id) // Use paymentIntent.id as order id
+
+        // Set data
+        .set({
+          basket: basket,
+          amount: paymentIntent.amount,
+          created: paymentIntent.created // timestamp
+        })
 
       setSucceeded(true);
       setError(null);

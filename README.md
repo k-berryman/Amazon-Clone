@@ -1241,4 +1241,30 @@ and create `Orders.css`
 
 -----
 
-Now we need to push order into database
+**Now we need to push order into database**
+Go to Firebase, go to Firestore tab, click "create firestore db", click "test mode", choose any location
+
+Go to `Payment.js`
+`import { db } from './firebase';`
+After we complete the payment (in the .then)
+```
+// Push into NoSQL db
+db
+  .collection('users')   // Target users collection
+  .doc(user?.id)         // Target specific user
+  .collection('orders')  // Target user's orders collection
+  .doc(paymentIntent.id) // Use paymentIntent.id as order id
+
+  // Set data
+  .set({
+    basket: basket,
+    amount: paymentIntent.amount,
+    created: paymentIntent.created // timestamp
+  })
+```
+
+OMG IT WORKED
+(after restarting backend)
+
+
+Now Firestore records all users who place orders and their orders with each item
