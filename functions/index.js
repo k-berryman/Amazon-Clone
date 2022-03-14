@@ -2,7 +2,7 @@ const functions = require("firebase-functions");
 const express = require("express");
 const cors = require("cors");
 
-const SECRET_KEY = '';
+const SECRET_KEY = 'sk_test_51KbFo2FVAzDj8bVXfkknYvYWgmmsujFZgNGwmehY3SL5E8JAHbPUf5szrXkcZsqpK7zgbCzyK4Obw6CbZdpoq3m300reuGFzgp';
 const stripe = require("stripe")(`${SECRET_KEY}`);
 
 // SETUP EXPRESS APP / API

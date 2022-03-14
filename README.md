@@ -5,6 +5,15 @@ https://www.youtube.com/watch?v=RDV3Z1KCBvo&list=PLKtYlTJOyYZNdhJ708REZiNOeeXOWh
 `npm start`
 Remember to remove/add secret key in `functions/index.js`
 
+This is the set up needed to get the backend Express app running on a cloud function
+
+Run this on our local machine by emulating it.
+In `functions/`, `firebase emulators:start`
+This spins up an Express Server and pops up a window -- we got to http://localhost:4000/functions
+`./emulator.png`
+
+This shows us our backend logs. Keep the backend running - don't close terminal.
+
 ## Getting Set Up
 In a new dir, run `npx create-react-app amazon-clone`
 This sets up a starter template
@@ -1185,3 +1194,51 @@ In Stripe, go to Payments
 
 To change it from a fake payment to a real payment,
 switch from using the test keys to the real keys inside of the API section
+
+All done!!
+
+## The Orders History Page (Realtime DB)
+
+An an order is placed, empty the basket
+In `src/Payment.js`,
+```
+dispatch({
+  type: 'EMPTY_BASKET'
+})
+```
+
+Now go into `Reducer.js` (where we listen to the events) and add
+```
+case "EMPTY_BASKET":
+  return {
+     ...state,
+     basket: []
+  }
+```
+------
+
+Redirect them to `/orders`
+Build orders component
+Go to `App.js`
+Create a route for orders `<Route path="/orders" element={<Orders />}/>`
+`import Orders from './Orders';`
+
+Create `Orders.js`
+```
+import React from 'react'
+import './Orders.css'
+
+function Orders() {
+  return (
+    <div className="orders">
+    </div>
+  )
+}
+
+export default Orders
+```
+and create `Orders.css`
+
+-----
+
+Now we need to push order into database
