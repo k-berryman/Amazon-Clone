@@ -1305,3 +1305,11 @@ We're going to install Moment for timestamps
 `npm install moment`
 
 Reuse CheckoutProduct component in Order.js
+
+Although, now it shouldn't have the remove from basket button, so inside of `CheckoutProduct` add prop hideButton to be passed in and
+```
+        {!hideButton && (
+          <button onClick={removeFromBasket}>Remove from Basket</button>
+        )}
+```
+And pass in hideButton in `Orders.js`
